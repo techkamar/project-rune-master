@@ -1,11 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 
 app = FastAPI()
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+async def root(request: Request):
+    client_host = request.client.host
+    return {"client_host": client_host}
     
 @app.get("/api/slave/command")
 async def command():
