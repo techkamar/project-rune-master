@@ -48,4 +48,15 @@ async def screenshotdownload():
 
 @app.get("/api/master/slaves")
 async def listallslaves():
-    return redisutil.find_all_keys_with_pattern("INFO")
+    slaves_list= []
+    
+    slaves = redisutil.find_all_keys_with_pattern("INFO")
+    
+    if slaves is None:
+        return slaves_list
+    
+    for slave_key in slaves:
+        value = redisutil.get_value_from_key(slave_key)
+        slaves_list.append(vaue)
+    
+    return slaves_list
