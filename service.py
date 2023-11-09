@@ -116,6 +116,8 @@ def list_all_slaves():
     for slave_key in slaves:
         redis_key = str(slave_key, 'UTF-8')
         value = redisutil.get_value_from_key(redis_key)
+        print("Slave Value ")
+        print(value)
         value = json.loads(value)
         slaves_list.append(value)
     
