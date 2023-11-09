@@ -57,6 +57,7 @@ async def listallslaves():
     
     for slave_key in slaves:
         value = redisutil.get_value_from_key(slave_key)
+        print(f"SLAVE KEY is {slave_key} VALUE is {value}")
         slaves_list.append(value)
     
     return slaves_list
