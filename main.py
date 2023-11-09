@@ -1,9 +1,11 @@
 from typing import Annotated
 import os
+import json
 import shutil
 from fastapi import FastAPI, Request, UploadFile
 from models import SlaveCommandRequest
 from fastapi.responses import FileResponse
+import redisutil
 app = FastAPI()
 
 
@@ -21,6 +23,8 @@ async def command(request: Request, slaveCommand: SlaveCommandRequest):
         "hostname": slaveCommand.hostname,
         "os": slaveCommand.os,
     }
+    key = f"INFO_{slaveCommand.mac}"
+    redisutil.set_key_val(key,json.dumps(resp))
     return resp
     
 @app.get("/api/slave/response/text")
@@ -41,3 +45,7 @@ async def screenshotresponse(file: UploadFile):
 @app.get("/api/master/screenshot")
 async def screenshotdownload():
     return FileResponse(os.getcwd()+"/screenshot.png")
+
+@app.get("/api/master/slaves")
+async def listallslaves():
+    return redisutil.find_all_keys_with_pattern("INFO")
