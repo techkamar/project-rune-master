@@ -106,6 +106,7 @@ def clear_redis():
 #######################################################################
 
 
+# SERVICE ENTRY FUNCTION
 def list_all_slaves():
     slaves_list= []
     slaves = redisutil.find_all_keys_with_pattern(REDIS_PREFIX_INFO)
@@ -116,13 +117,12 @@ def list_all_slaves():
     for slave_key in slaves:
         redis_key = str(slave_key, 'UTF-8')
         value = redisutil.get_value_from_key(redis_key)
-        print("Slave Value ")
-        print(value)
         value = json.loads(value)
         slaves_list.append(value)
     
     return slaves_list
 
+# SERVICE ENTRY FUNCTION
 def set_command_to_slave_from_master(master_command):
     slave_cmd_json = {
         "type": master_command.type,
@@ -132,6 +132,7 @@ def set_command_to_slave_from_master(master_command):
     key = f"{REDIS_PREFIX_SLAVE_COMMAND}_{master_command.mac}"
     redisutil.set_key_val(key,json.dumps(slave_cmd_json))
 
+# SERVICE ENTRY FUNCTION
 def get_response_from_slave_to_master(mac_address):
     key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{mac_address}"
     
