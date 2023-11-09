@@ -1,6 +1,9 @@
 from typing import Annotated
+import os
+import shutil
 from fastapi import FastAPI, Request, UploadFile
 from models import SlaveCommandRequest
+from fastapi.responses import FileResponse
 app = FastAPI()
 
 
@@ -27,3 +30,14 @@ async def textresponse():
 @app.post("/api/slave/response/file")
 async def fileresponse(file: UploadFile):
     return {"name": file.filename, "size": file.size}
+
+@app.post("/api/slave/response/screenshot")
+async def screenshotresponse(file: UploadFile):
+    full_file_path = os.getcwd()+"/screenshot.png"
+    with open(full_file_path,"wb") as buffer:
+        shutil.copyfileobj(file.file,buffer)
+    return {"name": file.filename, "size": file.size}
+
+@app.get("/api/master/screenshot")
+async def screenshotdownload():
+    return FileResponse(os.getcwd()+"/screenshot.png")
