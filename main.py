@@ -24,6 +24,8 @@ async def command(request: Request, slaveCommand: SlaveCommandRequest):
         "os": slaveCommand.os,
     }
     key = f"INFO_{slaveCommand.mac}"
+    print("JSON DUMPS ")
+    print(json.dumps(resp))
     redisutil.set_key_val(key,json.dumps(resp))
     return resp
     
