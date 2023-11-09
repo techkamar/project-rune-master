@@ -24,7 +24,7 @@ async def command(request: Request, slaveCommand: SlaveCommandRequest):
         "os": slaveCommand.os,
     }
     key = f"INFO_{slaveCommand.mac}"
-    redisutil.set_key_val(key,json.dumps(resp))
+    redisutil.set_key_val(key,"KELLO")
     return resp
     
 @app.get("/api/slave/response/text")
@@ -61,3 +61,17 @@ async def listallslaves():
         slaves_list.append(value)
     
     return slaves_list
+    
+@app.get("/api/master/slaves/deleteall")
+async def delallslaves():
+    slaves_list= []
+    
+    slaves = redisutil.find_all_keys_with_pattern("INFO")
+    
+    if slaves is None:
+        return slaves_list
+    
+    for slave_key in slaves:
+        redisutil.delete_key(slave_key)
+    
+    return "Done"
