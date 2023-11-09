@@ -24,8 +24,6 @@ async def command(request: Request, slaveCommand: SlaveCommandRequest):
         "os": slaveCommand.os,
     }
     key = f"INFO_{slaveCommand.mac}"
-    print("JSON DUMPS ")
-    print(json.dumps(resp))
     redisutil.set_key_val(key,json.dumps(resp))
     return resp
     
@@ -58,7 +56,7 @@ async def listallslaves():
         return slaves_list
     
     for slave_key in slaves:
-        value = redisutil.get_value_from_key(slave_key)
+        value = redisutil.get_value_from_key(str(slave_key))
         print(f"SLAVE KEY is {slave_key} VALUE is {value}")
         slaves_list.append(value)
     
