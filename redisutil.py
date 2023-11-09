@@ -14,4 +14,7 @@ def get_value_from_key(key):
 def find_all_keys_with_pattern(prefix):
   pattern = f"{prefix}*"
   return client.keys(pattern=pattern)
+
+def delete_key(key):
+  client.delete(key)
   
