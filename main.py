@@ -57,7 +57,7 @@ async def listallslaves():
 async def master_command(master_command: MasterCommandRequest):
     return Service.set_command_to_slave_from_master(master_command)
 
-@app.post("/api/master/slave/response")
+@app.get("/api/master/slave/response")
 async def master_response(mac: str):
     return Service.get_response_from_slave_to_master(mac)
     
