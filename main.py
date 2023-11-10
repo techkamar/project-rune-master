@@ -12,7 +12,8 @@ import time
 app = FastAPI()
 
 origins = [
-    "https://rune-master-ui.netlify.app"
+    "https://rune-master-ui.netlify.app",
+    "http://localhost:5173"
 ]
 
 app.add_middleware(
