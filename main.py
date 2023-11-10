@@ -12,7 +12,7 @@ import time
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173/"
+    "*"
 ]
 
 app.add_middleware(
