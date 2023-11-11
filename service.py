@@ -139,6 +139,16 @@ def get_response_from_slave_to_master(mac_address):
     value = redisutil.get_value_from_key(key)
 
     if value is None:
-        return {}
+        return {"code":404}
     
-    return json.loads(value)
+    response = json.loads(value)
+    response['code'] = 200
+    return response
+
+# SERVICE ENTRY FUNCTION
+def clear_slave_response(mac_address):
+    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{mac_address}"
+    
+    redisutil.delete_key(key)
+    
+    return "OK"

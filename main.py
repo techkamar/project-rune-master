@@ -60,6 +60,10 @@ async def master_command(master_command: MasterCommandRequest):
 @app.get("/api/master/slave/response")
 async def master_response(mac: str):
     return Service.get_response_from_slave_to_master(mac)
+
+@app.get("/api/master/slave/clear/response")
+async def clear_slave_response(mac: str):
+    return Service.clear_slave_response(mac)
     
 @app.get("/api/redis/reset")
 async def clearredis():
