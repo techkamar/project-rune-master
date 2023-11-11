@@ -132,6 +132,9 @@ def set_command_to_slave_from_master(master_command):
     key = f"{REDIS_PREFIX_SLAVE_COMMAND}_{master_command.mac}"
     redisutil.set_key_val(key,json.dumps(slave_cmd_json))
 
+    # Clear old response
+    redisutil.delete_key(f"{REDIS_PREFIX_SLAVE_RESPONSE}_{master_command.mac}")
+
 # SERVICE ENTRY FUNCTION
 def get_response_from_slave_to_master(mac_address):
     key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{mac_address}"
