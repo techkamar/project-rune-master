@@ -71,6 +71,10 @@ async def master_screenshot_response(mac: str):
 @app.get("/api/master/slave/response/screenshot/exists")
 async def master_screenshot_exists(mac: str):
     return Service.check_screenshot_exists(mac)
+
+@app.get("/api/master/slave/response/screenshot/delete")
+async def master_screenshot_delete(mac: str):
+    return Service.delete_screenshot(mac)
         
 
 @app.get("/api/master/slave/clear/response")

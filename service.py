@@ -169,8 +169,18 @@ def get_screenshot_from_slave(mac):
         return file_path
     return None
 
+# SERVICE ENTRY FUNCTION
 def check_screenshot_exists(mac):
     file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
     if os.path.isfile(file_path):
+        return {'code':200}
+    return {'code': 404}
+
+# SERVICE ENTRY FUNCTION
+def delete_screenshot(mac):
+    file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
+    print(f"FilePath is {file_path}")
+    if os.path.isfile(file_path):
+        os.remove(file_path)
         return {'code':200}
     return {'code': 404}
