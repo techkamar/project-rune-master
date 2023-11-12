@@ -43,12 +43,9 @@ async def fileresponse(mac: str, file: UploadFile):
     return Service.save_slave_file_upload(mac,file)
 
 @app.post("/api/slave/response/screenshot")
-async def screenshotresponse(file: UploadFile):
-    return Service.save_screenshot_from_slave(file)
+async def screenshotresponse(mac: str, file: UploadFile):
+    return Service.save_screenshot_from_slave(mac, file)
 
-# @app.get("/api/master/screenshot")
-# async def screenshotdownload():
-#     return FileResponse(os.getcwd()+"/screenshot.png")
 
 @app.get("/api/master/slaves")
 async def listallslaves():
@@ -63,13 +60,17 @@ async def master_response(mac: str):
     return Service.get_response_from_slave_to_master(mac)
 
 @app.get("/api/master/slave/response/screenshot")
-async def master_screenshot_response():
-    file_path = Service.get_screenshot_from_slave()
+async def master_screenshot_response(mac: str):
+    file_path = Service.get_screenshot_from_slave(mac)
 
     if file_path is None:
         raise HTTPException(status_code=404, detail="Screenshot not found!")
     
     return FileResponse(file_path)
+
+@app.get("/api/master/slave/response/screenshot/exists")
+async def master_screenshot_exists(mac: str):
+    return Service.check_screenshot_exists(mac)
         
 
 @app.get("/api/master/slave/clear/response")
