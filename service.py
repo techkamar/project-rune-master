@@ -179,7 +179,6 @@ def check_screenshot_exists(mac):
 # SERVICE ENTRY FUNCTION
 def delete_screenshot(mac):
     file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
-    print(f"FilePath is {file_path}")
     if os.path.isfile(file_path):
         os.remove(file_path)
         return {'code':200}
