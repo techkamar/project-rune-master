@@ -152,3 +152,10 @@ def clear_slave_response(mac_address):
     redisutil.delete_key(key)
     
     return "OK"
+
+# 
+def get_screenshot_from_slave():
+    file_path = os.getcwd()+"/screenshot.png"
+    if os.path.isfile(file_path):
+        return file_path
+    return None

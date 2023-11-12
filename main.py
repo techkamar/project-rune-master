@@ -1,8 +1,9 @@
 from typing import Annotated
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 import os
 import json
-from fastapi import FastAPI, Request, UploadFile
+from fastapi import FastAPI, Request, UploadFile, HTTPException
 from models import SlaveCommandRequest, SlaveTextOutputRequest, MasterCommandRequest
 from fastapi.responses import FileResponse
 import redisutil
@@ -45,9 +46,9 @@ async def fileresponse(mac: str, file: UploadFile):
 async def screenshotresponse(file: UploadFile):
     return Service.save_screenshot_from_slave(file)
 
-@app.get("/api/master/screenshot")
-async def screenshotdownload():
-    return FileResponse(os.getcwd()+"/screenshot.png")
+# @app.get("/api/master/screenshot")
+# async def screenshotdownload():
+#     return FileResponse(os.getcwd()+"/screenshot.png")
 
 @app.get("/api/master/slaves")
 async def listallslaves():
@@ -60,6 +61,16 @@ async def master_command(master_command: MasterCommandRequest):
 @app.get("/api/master/slave/response")
 async def master_response(mac: str):
     return Service.get_response_from_slave_to_master(mac)
+
+@app.get("/api/master/slave/response/screenshot")
+async def master_screenshot_response():
+    file_path = Service.get_screenshot_from_slave()
+
+    if file_path is None:
+        raise HTTPException(status_code=404, detail="Screenshot not found!")
+    
+    return FileResponse(file_path)
+        
 
 @app.get("/api/master/slave/clear/response")
 async def clear_slave_response(mac: str):
