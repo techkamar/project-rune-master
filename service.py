@@ -9,6 +9,11 @@ REDIS_PREFIX_INFO = "INFO"
 REDIS_PREFIX_SLAVE_COMMAND = "SLAVE_COMMAND"
 REDIS_PREFIX_SLAVE_RESPONSE = "SLAVE_RESPONSE"
 
+
+
+def get_formatted_mac(mac):
+    return mac.replace(":","_")
+
 #######################################################################
 #                           SLAVE METHODs                             #
 #######################################################################
@@ -87,8 +92,12 @@ def set_slave_command_output(slave_text_op_req):
     return {"message":"done"}
 
 # SERVICE ENTRY FUNCTION
-def save_screenshot_from_slave(file):
-    full_file_path = f"{os.getcwd()}/screenshot.png"
+def save_screenshot_from_slave(mac, file):
+    output_dir = f"{os.getcwd()}/screenshot"
+    os.makedirs(output_dir, exist_ok = True)
+
+
+    full_file_path = f"{output_dir}/{get_formatted_mac(mac)}.png"
     with open(full_file_path,"wb") as buffer:
         shutil.copyfileobj(file.file,buffer)
     return "OK"
@@ -152,3 +161,25 @@ def clear_slave_response(mac_address):
     redisutil.delete_key(key)
     
     return "OK"
+
+# SERVICE ENTRY FUNCTION
+def get_screenshot_from_slave(mac):
+    file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
+    if os.path.isfile(file_path):
+        return file_path
+    return None
+
+# SERVICE ENTRY FUNCTION
+def check_screenshot_exists(mac):
+    file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
+    if os.path.isfile(file_path):
+        return {'code':200}
+    return {'code': 404}
+
+# SERVICE ENTRY FUNCTION
+def delete_screenshot(mac):
+    file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+        return {'code':200}
+    return {'code': 404}
