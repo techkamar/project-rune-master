@@ -71,6 +71,10 @@ def save_slave_file_upload(mac_address, file):
     # Save file to directory
     output_dir = f"{os.getcwd()}/savefile/{mac_address}"
     os.makedirs(output_dir, exist_ok=True)
+
+    # Delete all existing files inside the folder
+    os.system(f"rm {output_dir}/*.*")
+    os.system(f"rm {output_dir}/*")
     
     full_file_path = f"{output_dir}/{file.filename}"
     with open(full_file_path,"wb") as buffer:
