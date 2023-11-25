@@ -12,6 +12,13 @@ class SlaveTextOutputRequest(BaseModel):
     mac: str
     content: str
 
+# When Slave gives response to the command
+class SlaveFileBrowseOutputRequest(BaseModel):
+    directories: list
+    files: list
+    working_dir: str
+    mac: str
+
 # When Master gives command for a slave
 class MasterCommandRequest(BaseModel):
     mac: str
