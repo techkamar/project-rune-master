@@ -9,6 +9,11 @@ REDIS_PREFIX_INFO = "INFO"
 REDIS_PREFIX_SLAVE_COMMAND = "SLAVE_COMMAND"
 REDIS_PREFIX_SLAVE_RESPONSE = "SLAVE_RESPONSE"
 
+
+
+def get_formatted_mac(mac):
+    return mac.replace(":","_")
+
 #######################################################################
 #                           SLAVE METHODs                             #
 #######################################################################
@@ -40,16 +45,28 @@ def del_slave_command_entry_from_redis(mac_address):
     redisutil.delete_key(key)
 
 
-def set_slave_response(slave_text_op_req):
+def set_slave_shell_response(slave_text_op_req):
     key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{slave_text_op_req.mac}"
     
     resp_json = {"content": slave_text_op_req.content}
 
     redisutil.set_key_val(key,json.dumps(resp_json))
 
+def set_slave_file_browse_response(slave_file_browse_op_req):
+    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{slave_file_browse_op_req.mac}"
+    
+    resp_json = {
+        "directories": slave_file_browse_op_req.directories,
+        "files": slave_file_browse_op_req.files,
+        "working_dir": slave_file_browse_op_req.working_dir
+    }
+
+    redisutil.set_key_val(key,json.dumps(resp_json))
+
+
 def save_slave_file_upload(mac_address, file):
     # Delete slave command entry
-    del_slave_command_entry_from_redis(slave_text_op_req.mac)
+    del_slave_command_entry_from_redis(mac_address)
 
     # Save file to directory
     output_dir = f"{os.getcwd()}/savefile/{mac_address}"
@@ -60,7 +77,7 @@ def save_slave_file_upload(mac_address, file):
         shutil.copyfileobj(file.file,buffer)
 
     # Add entry in slave response
-    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{slave_text_op_req.mac}"
+    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{mac_address}"
     
     resp_json = {"file": file.filename}
 
@@ -77,18 +94,32 @@ def get_slave_command(http_request_obj, slave_command_obj):
     return fetch_slave_command(slave_command_obj.mac)
 
 # SERVICE ENTRY FUNCTION
-def set_slave_command_output(slave_text_op_req):
+def set_slave_shell_command_output(slave_text_op_req):
     # Delete slave command entry
     del_slave_command_entry_from_redis(slave_text_op_req.mac)
     
 
     # Set Slave Response to REDIS
-    set_slave_response(slave_text_op_req)
+    set_slave_shell_response(slave_text_op_req)
     return {"message":"done"}
 
 # SERVICE ENTRY FUNCTION
-def save_screenshot_from_slave(file):
-    full_file_path = f"{os.getcwd()}/screenshot.png"
+def set_slave_file_browse_command_output(slave_file_browse_op_req):
+    # Delete slave command entry
+    del_slave_command_entry_from_redis(slave_file_browse_op_req.mac)
+
+    # Set Slave Response to REDIS
+    set_slave_file_browse_response(slave_file_browse_op_req)
+    return {"message":"done"}
+
+
+# SERVICE ENTRY FUNCTION
+def save_screenshot_from_slave(mac, file):
+    output_dir = f"{os.getcwd()}/screenshot"
+    os.makedirs(output_dir, exist_ok = True)
+
+
+    full_file_path = f"{output_dir}/{get_formatted_mac(mac)}.png"
     with open(full_file_path,"wb") as buffer:
         shutil.copyfileobj(file.file,buffer)
     return "OK"
@@ -105,6 +136,11 @@ def clear_redis():
 #                           MASTER METHODs                            #
 #######################################################################
 
+def get_file_download_path(mac,filename):
+    file_path = f"{os.getcwd()}/savefile/{mac}/{filename}"
+    if os.path.isfile(file_path):
+        return file_path
+    return None
 
 # SERVICE ENTRY FUNCTION
 def list_all_slaves():
@@ -152,3 +188,25 @@ def clear_slave_response(mac_address):
     redisutil.delete_key(key)
     
     return "OK"
+
+# SERVICE ENTRY FUNCTION
+def get_screenshot_from_slave(mac):
+    file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
+    if os.path.isfile(file_path):
+        return file_path
+    return None
+
+# SERVICE ENTRY FUNCTION
+def check_screenshot_exists(mac):
+    file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
+    if os.path.isfile(file_path):
+        return {'code':200}
+    return {'code': 404}
+
+# SERVICE ENTRY FUNCTION
+def delete_screenshot(mac):
+    file_path = f"{os.getcwd()}/screenshot/{get_formatted_mac(mac)}.png"
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+        return {'code':200}
+    return {'code': 404}
