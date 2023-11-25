@@ -16,6 +16,7 @@ class SlaveTextOutputRequest(BaseModel):
 class SlaveFileBrowseOutputRequest(BaseModel):
     directories: list
     files: list
+    working_dir: str
     mac: str
 
 # When Master gives command for a slave

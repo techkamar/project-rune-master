@@ -57,7 +57,8 @@ def set_slave_file_browse_response(slave_file_browse_op_req):
     
     resp_json = {
         "directories": slave_file_browse_op_req.directories,
-        "files": slave_file_browse_op_req.files
+        "files": slave_file_browse_op_req.files,
+        "working_dir": slave_file_browse_op_req.working_dir
     }
 
     redisutil.set_key_val(key,json.dumps(resp_json))
@@ -65,7 +66,7 @@ def set_slave_file_browse_response(slave_file_browse_op_req):
 
 def save_slave_file_upload(mac_address, file):
     # Delete slave command entry
-    del_slave_command_entry_from_redis(slave_text_op_req.mac)
+    del_slave_command_entry_from_redis(mac_address)
 
     # Save file to directory
     output_dir = f"{os.getcwd()}/savefile/{mac_address}"
@@ -76,7 +77,7 @@ def save_slave_file_upload(mac_address, file):
         shutil.copyfileobj(file.file,buffer)
 
     # Add entry in slave response
-    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{slave_text_op_req.mac}"
+    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{mac_address}"
     
     resp_json = {"file": file.filename}
 
@@ -135,6 +136,11 @@ def clear_redis():
 #                           MASTER METHODs                            #
 #######################################################################
 
+def get_file_download_path(mac,filename):
+    file_path = f"{os.getcwd()}/savefile/{mac}/{filename}"
+    if os.path.isfile(file_path):
+        return file_path
+    return None
 
 # SERVICE ENTRY FUNCTION
 def list_all_slaves():

