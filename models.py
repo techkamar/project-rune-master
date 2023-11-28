@@ -6,6 +6,7 @@ class SlaveCommandRequest(BaseModel):
     mac: str
     hostname: str
     os: str
+    ostype : str
 
 # When Slave gives response to the command
 class SlaveTextOutputRequest(BaseModel):
