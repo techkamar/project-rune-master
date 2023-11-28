@@ -25,6 +25,7 @@ def update_info(http_request_obj, slave_command_obj):
         "mac": slave_command_obj.mac,
         "hostname": slave_command_obj.hostname,
         "os": slave_command_obj.os,
+        "ostype": slave_command_obj.ostype,
         "timestamp": int(time.time())
     }
     key = f"{REDIS_PREFIX_INFO}_{slave_command_obj.mac}"
