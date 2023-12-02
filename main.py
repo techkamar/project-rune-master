@@ -97,6 +97,11 @@ async def master_screenshot_delete(mac: str):
 async def clear_slave_response(mac: str):
     return Service.clear_slave_response(mac)
     
-@app.get("/api/redis/reset")
+@app.get("/api/master/redis/reset")
 async def clearredis():
     return Service.clear_redis()
+
+@app.get("/api/master/getenv")
+async def getenvgo():
+    variable = os.environ["XYBER"]
+    return variable
