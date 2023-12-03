@@ -1,11 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 import service as Service
 import os
 from models import MasterCommandRequest
 from fastapi.responses import FileResponse
 
 
-def validate_secret_key(auth_token):
+def validate_secret_key(request:Request):
+    auth_token = request.headers.get("auth_token")
     try:
         if auth_token!=os.environ["SECRET_KEY"]:
             raise HTTPException(status_code=403, detail="Unauthenticated")

@@ -2,11 +2,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from admin_controller import admin
 from slave_controller import slave
+import os
 
 app = FastAPI()
 
 origins = [
-    "https://rune-master-ui.netlify.app"
+    os.environ["UI_SERVER"]
 ]
 
 app.add_middleware(

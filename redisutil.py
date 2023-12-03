@@ -1,7 +1,6 @@
 import redis
-
-# client = redis.Redis.from_url('redis://red-cl5r0od6fh7c73etkn90:6379')
-client = redis.Redis.from_url('redis://localhost:6379')
+import os
+client = redis.Redis.from_url(os.environ["REDIS_SERVER"])
 
 def set_key_val_with_ttl(key,value,ttl_in_seconds):
   client.set(key,value, ex=ttl_in_seconds)
