@@ -25,7 +25,7 @@ class MasterPasswordRequest(BaseModel):
 
 @app.get("/")
 async def root():
-    return "HELLO WORLD"
+    return os.environ["UI_SERVER"]
 
 @app.post("/api/validate/master/password")
 async def validate_master_password(password_request:MasterPasswordRequest):
