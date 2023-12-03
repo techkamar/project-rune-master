@@ -15,4 +15,4 @@ Open terminal and run commands
 Open terminal and run commands
 
 1. source env.sh
-2. sh start.sh
+2. sh start.sh 

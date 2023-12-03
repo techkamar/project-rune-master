@@ -1,5 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
+from pydantic import BaseModel
 from admin_controller import admin
 from slave_controller import slave
 import os
@@ -18,9 +19,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class MasterPasswordRequest(BaseModel):
+    password: str
+
+
 @app.get("/")
 async def root():
     return "HELLO WORLD"
+
+@app.post("/api/validate/master/password")
+async def validate_master_password(password_request:MasterPasswordRequest):
+    if password_request.password == os.environ["SECRET_KEY"]:
+        return {"success":True}
+    return {"success":False}
     
 app.include_router(admin, prefix="/api")
 app.include_router(slave, prefix="/api")
