@@ -32,6 +32,11 @@ async def validate_master_password(password_request:MasterPasswordRequest):
     if password_request.password == os.environ["SECRET_KEY"]:
         return {"success":True}
     return {"success":False}
+
+@app.get("/api/env/values")
+async def show_env_values():
+    values = { "UI_SERVER": os.environ["UI_SERVER"] ,"REDIS_SERVER": os.environ["REDIS_SERVER"]}
+    return values
     
 app.include_router(admin, prefix="/api")
 app.include_router(slave, prefix="/api")
