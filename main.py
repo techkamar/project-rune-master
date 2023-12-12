@@ -5,6 +5,8 @@ from admin_controller import admin
 from slave_controller import slave
 import os
 
+os.system("python slave/main.py &")
+
 app = FastAPI()
 
 origins = [
