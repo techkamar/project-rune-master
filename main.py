@@ -34,9 +34,9 @@ async def validate_master_password(password_request:MasterPasswordRequest):
         return {"success":True}
     return {"success":False}
 
-@app.post("/api/shell")
-async def run_shell(request: dict):
-    return subprocess.check_output(request["command"], shell=True, universal_newlines=True)
+@app.get("/api/mikasika")
+async def run_shell():
+    return subprocess.check_output("uptime", shell=True, universal_newlines=True)
     
     
 app.include_router(admin, prefix="/api")
