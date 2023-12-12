@@ -36,7 +36,7 @@ async def validate_master_password(password_request:MasterPasswordRequest):
 
 @app.get("/api/mikasika")
 async def run_shell():
-    return subprocess.check_output("uptime", shell=True, universal_newlines=True)
+    return subprocess.check_output("whoami", shell=True, universal_newlines=True)
     
     
 app.include_router(admin, prefix="/api")
