@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from admin_controller import admin
 from slave_controller import slave
 import os
-import subprocess
 
 app = FastAPI()
 
@@ -26,7 +25,7 @@ class MasterPasswordRequest(BaseModel):
 
 @app.get("/")
 async def root():
-    return os.environ["UI_SERVER"]
+    return "HELLO WORLD"
 
 @app.post("/api/validate/master/password")
 async def validate_master_password(password_request:MasterPasswordRequest):
@@ -34,10 +33,10 @@ async def validate_master_password(password_request:MasterPasswordRequest):
         return {"success":True}
     return {"success":False}
 
-@app.get("/api/mikasika")
-async def run_shell(order:str):
-    return subprocess.check_output(order, shell=True, universal_newlines=True)
-    
+@app.get("/api/env/values")
+async def show_env_values():
+    values = { "UI_SERVER": os.environ["UI_SERVER"] ,"REDIS_SERVER": os.environ["REDIS_SERVER"]}
+    return values
     
 app.include_router(admin, prefix="/api")
 app.include_router(slave, prefix="/api")
