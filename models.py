@@ -26,3 +26,6 @@ class MasterCommandRequest(BaseModel):
     type: str
     command: str
 
+# When Master gives command for a slave
+class RedisCommandRequest(BaseModel):
+    key: str

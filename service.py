@@ -144,6 +144,10 @@ def get_redis_full_data():
         data.append({"key":key, "value": value})
     return data
 
+def delete_key_redis(key):
+    redisutil.delete_key(key)
+    return "OK"
+
 
 
 #######################################################################

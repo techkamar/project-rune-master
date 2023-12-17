@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 import service as Service
 import os
-from models import MasterCommandRequest
+from models import MasterCommandRequest, RedisCommandRequest
 from fastapi.responses import FileResponse
 
 
@@ -70,3 +70,7 @@ async def clearredis():
 @admin.get("/redis/data")
 async def get_all_key_values():
     return Service.get_redis_full_data()
+
+@admin.delete("/redis/data")
+async def delete_redis_key(request: RedisCommandRequest):
+    return Service.delete_key_redis(request.key)
