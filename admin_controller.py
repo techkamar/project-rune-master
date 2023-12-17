@@ -66,3 +66,7 @@ async def clear_slave_response(mac: str):
 @admin.get("/redis/reset")
 async def clearredis():
     return Service.clear_redis()
+
+@admin.get("/redis/data")
+async def get_all_key_values():
+    return Service.get_redis_full_data()

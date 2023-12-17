@@ -136,6 +136,15 @@ def clear_redis():
     redisutil.reset_all()
     return "OK"
 
+def get_redis_full_data():
+    data = []
+    keys = redisutil.get_all_keys()
+    for key in keys:
+        value = redisutil.get_value_from_key(key)
+        data.append({"key":key, "value": value})
+    return data
+
+
 
 #######################################################################
 #                           MASTER METHODs                            #

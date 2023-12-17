@@ -21,3 +21,6 @@ def delete_key(key):
 def reset_all():
   for key in client.keys(pattern="*"):
     client.delete(key)
+  
+def get_all_keys():
+  return list(client.keys(pattern="*"))
