@@ -3,6 +3,7 @@ import json
 import os
 import time
 import shutil
+import hashlib
 
 
 REDIS_PREFIX_INFO = "INFO"
@@ -128,6 +129,22 @@ def save_screenshot_from_slave(mac, file):
     with open(full_file_path,"wb") as buffer:
         shutil.copyfileobj(file.file,buffer)
     return "OK"
+
+# SERVICE ENTRY FUNCTION
+def get_file_hash(folder, filename):
+    filename = filename+".exe"
+    full_file_path = f"{os.getcwd()}/files/{folder}/{filename}"
+    md5_hash = ""
+    with open(full_file_path, 'rb') as file_obj:
+        file_contents = file_obj.read()
+        md5_hash = hashlib.md5(file_contents).hexdigest()
+    return md5_hash
+    
+# SERVICE ENTRY FUNCTION
+def get_file_download(folder, filename):
+    filename = filename+".exe"
+    full_file_path = f"{os.getcwd()}/files/{folder}/{filename}"
+    return full_file_path
 
 ######################################################################
 #                           REDIS CONTROL                            #
