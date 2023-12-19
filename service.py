@@ -228,3 +228,21 @@ def delete_screenshot(mac):
         os.remove(file_path)
         return {'code':200}
     return {'code': 404}
+
+# SERVICE ENTRY FUNCTION
+def upload_file_for_admin(file, folder, name):
+    name = name + ".exe"
+
+    # Create main directory for files
+    output_dir = f"{os.getcwd()}/files"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Create sub directory for files
+    output_dir = f"{os.getcwd()}/files/{folder}"
+    os.makedirs(output_dir, exist_ok=True)
+
+    full_file_path = f"{output_dir}/{name}"
+    with open(full_file_path,"wb") as buffer:
+        shutil.copyfileobj(file.file,buffer)
+    
+    return {"message":"File Uploaded Successfully"}
