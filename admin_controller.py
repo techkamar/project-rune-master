@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, File, Form
 import service as Service
 import os
 from models import MasterCommandRequest, RedisCommandRequest
 from fastapi.responses import FileResponse
+from typing import Annotated
 
 
 def validate_secret_key(request:Request):
@@ -74,3 +75,12 @@ async def get_all_key_values():
 @admin.delete("/redis/data")
 async def delete_redis_key(request: RedisCommandRequest):
     return Service.delete_key_redis(request.key)
+
+
+@admin.post("/file/upload")
+async def upload_file(
+    file: Annotated[UploadFile, File()],
+    folder : Annotated[str, Form()], 
+    name: Annotated[str, Form()],
+    ):
+    return Service.upload_file_for_admin(file, folder, name)

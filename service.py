@@ -3,6 +3,7 @@ import json
 import os
 import time
 import shutil
+import hashlib
 
 
 REDIS_PREFIX_INFO = "INFO"
@@ -129,6 +130,22 @@ def save_screenshot_from_slave(mac, file):
         shutil.copyfileobj(file.file,buffer)
     return "OK"
 
+# SERVICE ENTRY FUNCTION
+def get_file_hash(folder, filename):
+    filename = filename+".exe"
+    full_file_path = f"{os.getcwd()}/files/{folder}/{filename}"
+    md5_hash = ""
+    with open(full_file_path, 'rb') as file_obj:
+        file_contents = file_obj.read()
+        md5_hash = hashlib.md5(file_contents).hexdigest()
+    return md5_hash
+    
+# SERVICE ENTRY FUNCTION
+def get_file_download(folder, filename):
+    filename = filename+".exe"
+    full_file_path = f"{os.getcwd()}/files/{folder}/{filename}"
+    return full_file_path
+
 ######################################################################
 #                           REDIS CONTROL                            #
 ######################################################################
@@ -228,3 +245,21 @@ def delete_screenshot(mac):
         os.remove(file_path)
         return {'code':200}
     return {'code': 404}
+
+# SERVICE ENTRY FUNCTION
+def upload_file_for_admin(file, folder, name):
+    name = name + ".exe"
+
+    # Create main directory for files
+    output_dir = f"{os.getcwd()}/files"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Create sub directory for files
+    output_dir = f"{os.getcwd()}/files/{folder}"
+    os.makedirs(output_dir, exist_ok=True)
+
+    full_file_path = f"{output_dir}/{name}"
+    with open(full_file_path,"wb") as buffer:
+        shutil.copyfileobj(file.file,buffer)
+    
+    return {"message":"File Uploaded Successfully"}
