@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
+from typing import List
 
 # When Slave asks the Master for any command to run
 class SlaveCommandRequest(BaseModel):
@@ -25,6 +26,9 @@ class MasterCommandRequest(BaseModel):
     mac: str
     type: str
     command: str
+
+class MasterCommandRequestList(RootModel):
+    root : List[MasterCommandRequest]
 
 # When Master gives command for a slave
 class RedisCommandRequest(BaseModel):

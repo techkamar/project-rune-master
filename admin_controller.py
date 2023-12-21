@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, File, Form
 import service as Service
 import os
-from models import MasterCommandRequest, RedisCommandRequest
+from models import MasterCommandRequestList, RedisCommandRequest
 from fastapi.responses import FileResponse
 from typing import Annotated
 
@@ -24,7 +24,7 @@ async def listallslaves():
     return Service.list_all_slaves()
 
 @admin.post("/slave/command")
-async def master_command(master_command: MasterCommandRequest):
+async def master_command(master_command: MasterCommandRequestList):
     return Service.set_command_to_slave_from_master(master_command)
 
 @admin.get("/slave/response")
