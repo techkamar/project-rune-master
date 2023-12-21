@@ -37,7 +37,7 @@ def fetch_slave_command(mac_address):
     value = redisutil.get_value_from_key(key)
     
     if value is None:
-        return {}
+        return []
     
     value = json.loads(value)
     return value
