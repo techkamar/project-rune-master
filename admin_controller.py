@@ -25,7 +25,7 @@ async def listallslaves():
 
 @admin.post("/slave/command")
 async def master_command(master_command: MasterCommandRequestList):
-    return Service.set_command_to_slave_from_master(master_command)
+    return Service.set_command_to_slave_from_master(master_command.root)
 
 @admin.get("/slave/response")
 async def master_response(mac: str):

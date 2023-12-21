@@ -195,12 +195,14 @@ def list_all_slaves():
 
 # SERVICE ENTRY FUNCTION
 def set_command_to_slave_from_master(master_command):
-    slave_cmd_json = {
-        "type": master_command.type,
-        "command": master_command.command
-    }
+    slave_cmd_json = []
+    for curr_command in master_command:
+        slave_cmd_json.append({
+            "type": curr_command.type,
+            "command": curr_command.command
+        })
 
-    key = f"{REDIS_PREFIX_SLAVE_COMMAND}_{master_command.mac}"
+    key = f"{REDIS_PREFIX_SLAVE_COMMAND}_{master_command[0].mac}"
     redisutil.set_key_val(key,json.dumps(slave_cmd_json))
 
 # SERVICE ENTRY FUNCTION
