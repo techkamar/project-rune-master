@@ -27,8 +27,19 @@ class MasterCommandRequest(BaseModel):
     type: str
     command: str
 
+# Individual Service Detail
+class Service(BaseModel):
+    ServiceName: str
+    ServiceType: str
+    StartType: str
+    Status : str
+
 class MasterCommandRequestList(RootModel):
     root : List[MasterCommandRequest]
+
+
+class ServiceList(RootModel):
+    root : List[Service]
 
 # When Master gives command for a slave
 class RedisCommandRequest(BaseModel):
