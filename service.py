@@ -54,6 +54,13 @@ def set_slave_shell_response(slave_text_op_req):
 
     redisutil.set_key_val(key,json.dumps(resp_json))
 
+def set_slave_service_response(mac, service_list):
+    key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{mac}"
+
+    service_list = {"services": service_list}
+
+    redisutil.set_key_val(key,json.dumps(service_list))
+
 def set_slave_file_browse_response(slave_file_browse_op_req):
     key = f"{REDIS_PREFIX_SLAVE_RESPONSE}_{slave_file_browse_op_req.mac}"
     
@@ -107,6 +114,25 @@ def set_slave_shell_command_output(slave_text_op_req):
 
     # Set Slave Response to REDIS
     set_slave_shell_response(slave_text_op_req)
+    return {"message":"done"}
+
+# SERVICE ENTRY FUNCTION
+def save_service(mac, service_list):
+    # Delete slave command entry
+    del_slave_command_entry_from_redis(mac)
+    
+    parsed_service_list = []
+    for service in service_list:
+        parsed_service_list.append(
+            {
+                "ServiceName": service.ServiceName,
+                "ServiceType": service.ServiceType,
+                "StartType": service.StartType,
+                "Status" : service.Status
+            }
+        )
+    # Set Slave Response to REDIS
+    set_slave_service_response(mac, parsed_service_list)
     return {"message":"done"}
 
 # SERVICE ENTRY FUNCTION

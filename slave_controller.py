@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, UploadFile, HTTPException
 import service as Service
 import os
 from fastapi.responses import FileResponse
-from models import SlaveCommandRequest, SlaveTextOutputRequest, SlaveFileBrowseOutputRequest
+from models import SlaveCommandRequest, SlaveTextOutputRequest, SlaveFileBrowseOutputRequest, ServiceList
 
 slave = APIRouter(
     prefix="/slave"
@@ -27,6 +27,10 @@ async def fileresponse(mac: str, file: UploadFile):
 @slave.post("/response/screenshot")
 async def screenshotresponse(mac: str, file: UploadFile):
     return Service.save_screenshot_from_slave(mac, file)
+
+@slave.post("/response/service")
+async def serviceresponse(mac: str, service_list: ServiceList):
+    return Service.save_service(mac, service_list.root)
 
 @slave.get("/files/{folder}/{filename}/hash")
 async def getfilehash(folder, filename):
